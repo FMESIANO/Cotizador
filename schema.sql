@@ -135,6 +135,19 @@ alter table public.quotes enable row level security;
 alter table public.quote_items enable row level security;
 alter table public.products enable row level security;
 alter table public.payment_methods enable row level security;
+alter table public.profiles enable row level security;
+
+-- Cada usuario puede leer (y solo leer) su propia fila de perfil.
+create policy "users_read_own_profile" on public.profiles
+  for select using (id = auth.uid());
+
+-- El admin puede leer y modificar cualquier perfil (necesario para el
+-- panel de Equipo y para ver el nombre del vendedor en el detalle de
+-- cada cotización).
+create policy "admin_full_access_profiles" on public.profiles
+  for all using (
+    exists (select 1 from public.profiles p where p.id = auth.uid() and p.role = 'admin')
+  );
 
 -- Admin: acceso total (se identifica por su fila en profiles.role)
 create policy "admin_full_access_quotes" on public.quotes
