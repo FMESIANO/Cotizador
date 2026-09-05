@@ -72,7 +72,10 @@ export function QuoteBuilder({
 
     const link = `${window.location.origin}/quote/${result.token}`;
     const cleanPhone = clientWhatsapp.replace(/\D/g, "");
-    const message = `Hola ${clientName.trim()} 👋 Soy ${sellerName}.\n\nTu presupuesto ya está listo, con el detalle completo y el precio final: ${link}\n\nCualquier duda, quedo a disposición 🙌`;
+    const itemsText = lines.map((l) => `• ${l.quantity} x ${l.name}`).join("\n");
+    const message = `Hola ${clientName.trim()} 👋 Soy ${sellerName}.\n\nTu presupuesto:\n${itemsText}\n\nTotal: ${formatCurrency(
+      pricing.total
+    )}\n\nVer el detalle completo y aprobarlo acá: ${link}\n\nCualquier duda, quedo a disposición 🙌`;
     window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`, "_blank");
 
     setConfirmation({ token: result.token, link });
